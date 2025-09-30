@@ -2,6 +2,13 @@
 
 This project is an expense management system that consists of a Streamlit frontend application and a FastAPI backend server.
 
+## Preview
+
+### Add/Update Page
+![Add/Update Page](/preview1_add_update.png)
+
+### Analytics Page
+![Analytics Page](/preview2_analytics.png)
 
 ## Project Structure
 
