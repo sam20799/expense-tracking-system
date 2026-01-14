@@ -1,29 +1,26 @@
-import sqlite3
+import psycopg2
+from psycopg2.extras import RealDictCursor
 from contextlib import contextmanager
 from .logging_setup import log_setup
-from pathlib import Path
+import os
+from dotenv import load_dotenv
 
+load_dotenv()
 
 logger = log_setup('db_helper')
 
-# DB_PATH = Path(__file__).parent.parent / 'database/expenses.db'
-DB_PATH = Path(__file__).parent / '../database/expenses.db'
-DB_PATH = DB_PATH.resolve()  # absolute path
-conn = sqlite3.connect(DB_PATH)
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 @contextmanager
 def get_cursor(commit=False):
-    connection = sqlite3.connect(DB_PATH)
-    connection.row_factory = sqlite3.Row  # <-- enables dict-like rows
+    connection = psycopg2.connect(DATABASE_URL)
+    cursor = connection.cursor(cursor_factory=RealDictCursor)
 
     try:
-        print("connected to sqlite")
-        cursor = connection.cursor()
+        logger.info("Connected to PostgreSQL")
         yield cursor
-
         if commit:
             connection.commit()
-
     finally:
         cursor.close()
         connection.close()
@@ -41,12 +38,12 @@ def fetch_all_record():
         return rows_to_dict_list(rows)
 
 
-def fetch_expense_for_date(date):
-    logger.info(f'fetch_expense_for_date called with date: {date}')
+def fetch_expense_for_date(expense_date):
+    logger.info(f'fetch_expense_for_date called with date: {expense_date}')
     with get_cursor() as cursor:
         cursor.execute(
-            "SELECT * FROM expenses WHERE expense_date = ?",
-            (date,)
+            "SELECT * FROM expenses WHERE expense_date = %s",
+            (expense_date,)
         )
         rows = cursor.fetchall()
         return rows_to_dict_list(rows)
@@ -57,12 +54,11 @@ def insert_record(expense_date, amount, category, notes):
         f'insert_record called with expense_date: {expense_date}, '
         f'amount: {amount}, category: {category}, notes: {notes}'
     )
-
     with get_cursor(commit=True) as cursor:
         cursor.execute(
             """
             INSERT INTO expenses (expense_date, amount, category, notes)
-            VALUES (?, ?, ?, ?)
+            VALUES (%s, %s, %s, %s)
             """,
             (expense_date, amount, category, notes)
         )
@@ -70,68 +66,46 @@ def insert_record(expense_date, amount, category, notes):
 
 def delete_record(expense_date):
     logger.info('delete_record called')
-
     with get_cursor(commit=True) as cursor:
         cursor.execute(
-            "DELETE FROM expenses WHERE expense_date = ?",
+            "DELETE FROM expenses WHERE expense_date = %s",
             (expense_date,)
         )
-
     print(f"Record deleted for date: {expense_date}")
 
 
 def get_summary(start_date, end_date):
-    logger.info(
-        f'get_summary called with start_date: {start_date}, end_date: {end_date}'
-    )
-
+    logger.info(f'get_summary called with start_date: {start_date}, end_date: {end_date}')
     with get_cursor() as cursor:
         cursor.execute(
             """
             SELECT category, SUM(amount) AS total
             FROM expenses
-            WHERE expense_date BETWEEN ? AND ?
+            WHERE expense_date BETWEEN %s AND %s
             GROUP BY category
             """,
             (start_date, end_date)
         )
-
         rows = cursor.fetchall()
         return rows_to_dict_list(rows)
 
+
 def get_monthly_summary():
-    logger.info(
-        'get_monthly_summary called'
-    )
+    logger.info('get_monthly_summary called')
     with get_cursor() as cursor:
         cursor.execute(
-            """ 
+            """
             SELECT 
-                CAST(strftime('%m', expense_date) AS INTEGER) AS month_no,
-                CASE strftime('%m', expense_date)
-                    WHEN '01' THEN 'January'
-                    WHEN '02' THEN 'February'
-                    WHEN '03' THEN 'March'
-                    WHEN '04' THEN 'April'
-                    WHEN '05' THEN 'May'
-                    WHEN '06' THEN 'June'
-                    WHEN '07' THEN 'July'
-                    WHEN '08' THEN 'August'
-                    WHEN '09' THEN 'September'
-                    WHEN '10' THEN 'October'
-                    WHEN '11' THEN 'November'
-                    WHEN '12' THEN 'December'
-                END AS month_name,
+                EXTRACT(MONTH FROM expense_date)::INT AS month_no,
+                TO_CHAR(expense_date, 'Month') AS month_name,
                 SUM(amount) AS total
             FROM expenses
-            GROUP BY month_no
+            GROUP BY month_no, month_name
             ORDER BY month_no;
-
             """
         )
         rows = cursor.fetchall()
         return rows_to_dict_list(rows)
-
 
 
 if __name__ == "__main__":
@@ -144,5 +118,3 @@ if __name__ == "__main__":
 
     monthly_summary = get_monthly_summary()
     print(monthly_summary)
-
-
