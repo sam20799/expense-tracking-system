@@ -1,6 +1,6 @@
 import sqlite3
 from contextlib import contextmanager
-from logging_setup import log_setup
+from .logging_setup import log_setup
 from pathlib import Path
 
 
