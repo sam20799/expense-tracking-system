@@ -6,8 +6,10 @@ from pathlib import Path
 
 logger = log_setup('db_helper')
 
-DB_PATH = Path(__file__).parent.parent / 'database/expenses.db'
-
+# DB_PATH = Path(__file__).parent.parent / 'database/expenses.db'
+DB_PATH = Path(__file__).parent / '../database/expenses.db'
+DB_PATH = DB_PATH.resolve()  # absolute path
+conn = sqlite3.connect(DB_PATH)
 
 @contextmanager
 def get_cursor(commit=False):
