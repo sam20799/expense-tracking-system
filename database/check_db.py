@@ -1,8 +1,10 @@
 import psycopg2
 from psycopg2.extras import RealDictCursor  # optional, to get results as dicts
 import os
+from dotenv import load_dotenv
+load_dotenv()
 
-DATABASE_URL = "postgresql://expenses_db_a5u5_user:W81hb8nLTx7PP884sobVCoC9nhaedMtK@dpg-d5jr9h7gi27c73e1mkfg-a.singapore-postgres.render.com/expenses_db_a5u5"
+DATABASE_URL = os.getenv('DATABASE_URL')
 
 # Connect to DB
 conn = psycopg2.connect(DATABASE_URL)

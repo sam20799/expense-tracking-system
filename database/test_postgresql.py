@@ -1,7 +1,9 @@
 import os
 import psycopg2
+from dotenv import load_dotenv
+load_dotenv()
 
-DATABASE_URL = "postgresql://expenses_db_a5u5_user:W81hb8nLTx7PP884sobVCoC9nhaedMtK@dpg-d5jr9h7gi27c73e1mkfg-a.singapore-postgres.render.com/expenses_db_a5u5"
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 def create_tables():
     conn = get_connection()
