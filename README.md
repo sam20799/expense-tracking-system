@@ -1,7 +1,12 @@
-# Expense Management System
+# Budget Buddy
 
-This project is an expense management system that consists of a Streamlit frontend application and a FastAPI backend server.
+- This project started as a simple local expense tracker — and evolved into a production-ready full-stack system after facing real deployment challenges.
 
+- It is built with a FastAPI backend and Streamlit frontend, designed using an API-first approach, and deployed on the cloud with a PostgreSQL production database.
+
+- Along the way, the system was refactored to handle real-world constraints such as environment-based configuration, containerized file systems, database persistence, structured logging, and automated testing.
+
+- This repository demonstrates not just feature development, but how to take a Python project from “works locally” to “works in production.”
 ## Preview
 
 ### Add/Update Page
