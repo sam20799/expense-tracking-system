@@ -5,15 +5,20 @@ This project is an expense management system that consists of a Streamlit fronte
 ## Preview
 
 ### Add/Update Page
-![Add/Update Page](/preview1_add_update.png)
+![Add/Update Page](/add_update.png)
 
-### Analytics Page
-![Analytics Page](/preview2_analytics.png)
+### Category wise Analytics Page
+![Analytics Page](/category_analytics.png)
+
+### Monthly Analytics Page
+![Analytics Page](/monthly_analytics.png)
+
 
 ## Project Structure
 
 - **frontend/**: Contains the Streamlit application code.
 - **backend/**: Contains the FastAPI backend server code.
+- **database/**: Contains creation and testing of postgresql.
 - **tests/**: Contains the test cases for both frontend and backend.
 - **requirements.txt**: Lists the required Python packages.
 - **README.md**: Provides an overview and instructions for the project.
@@ -28,9 +33,9 @@ This project is an expense management system that consists of a Streamlit fronte
    ```
 1. **Run the FastAPI server:**:   
    ```commandline
-    uvicorn server:app --reload
+    uvicorn backend.server:app --reload
    ```
 1. **Run the Streamlit app:**:   
    ```commandline
-    streamlit run app.py
+    streamlit run frontend/app.py
    ```
