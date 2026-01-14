@@ -2,7 +2,7 @@ import streamlit as st
 from datetime import datetime
 import requests
 
-API_URL = 'http://127.0.0.1:8000'
+API_URL = 'https://expense-tracking-system-5fin.onrender.com'
 
 def add_update():
     selected_date = st.date_input("Enter Date", datetime(2025, 8, 1), label_visibility='collapsed')

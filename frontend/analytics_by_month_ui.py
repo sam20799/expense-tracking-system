@@ -3,7 +3,7 @@ from datetime import datetime
 import requests
 import pandas as pd
 
-API_URL = 'http://127.0.0.1:8000'
+API_URL = 'https://expense-tracking-system-5fin.onrender.com'
 
 def monthly_analytics():
     response = requests.get(f'{API_URL}/monthlyAnalytics')
