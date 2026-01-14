@@ -1,7 +1,7 @@
-import os
 import sys
+from pathlib import Path
 
-project_root = os.path.join(os.path.dirname(__file__), "..")
-print("Project root: ", project_root)
-sys.path.insert(0, project_root)
-print(sys.path)
+root_path = Path(__file__).parent.parent
+if str(root_path) not in sys.path:
+    sys.path.insert(0,str(root_path))
+

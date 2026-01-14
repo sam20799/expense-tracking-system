@@ -1,12 +1,12 @@
 import sqlite3
 from contextlib import contextmanager
-from logging_setup import log_setup
+from backend.logging_setup import log_setup
 from pathlib import Path
 
 
 logger = log_setup('db_helper')
 
-DB_PATH = Path(__file__).parent.parent / 'database/expenses.db'
+DB_PATH = Path(__file__).parent / 'expenses.db'
 
 
 @contextmanager
@@ -97,40 +97,6 @@ def get_summary(start_date, end_date):
         rows = cursor.fetchall()
         return rows_to_dict_list(rows)
 
-def get_monthly_summary():
-    logger.info(
-        'get_monthly_summary called'
-    )
-    with get_cursor() as cursor:
-        cursor.execute(
-            """ 
-            SELECT 
-                CAST(strftime('%m', expense_date) AS INTEGER) AS month_no,
-                CASE strftime('%m', expense_date)
-                    WHEN '01' THEN 'January'
-                    WHEN '02' THEN 'February'
-                    WHEN '03' THEN 'March'
-                    WHEN '04' THEN 'April'
-                    WHEN '05' THEN 'May'
-                    WHEN '06' THEN 'June'
-                    WHEN '07' THEN 'July'
-                    WHEN '08' THEN 'August'
-                    WHEN '09' THEN 'September'
-                    WHEN '10' THEN 'October'
-                    WHEN '11' THEN 'November'
-                    WHEN '12' THEN 'December'
-                END AS month_name,
-                SUM(amount) AS total
-            FROM expenses
-            GROUP BY month_no
-            ORDER BY month_no;
-
-            """
-        )
-        rows = cursor.fetchall()
-        return rows_to_dict_list(rows)
-
-
 
 if __name__ == "__main__":
     expenses = fetch_expense_for_date('2025-08-15')
@@ -140,7 +106,5 @@ if __name__ == "__main__":
     for record in summary:
         print(record)
 
-    monthly_summary = get_monthly_summary()
-    print(monthly_summary)
 
 
