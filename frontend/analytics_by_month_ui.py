@@ -2,8 +2,12 @@ import streamlit as st
 from datetime import datetime
 import requests
 import pandas as pd
+from dotenv import load_dotenv
+import os
 
-API_URL = 'https://expense-tracking-system-5fin.onrender.com'
+load_dotenv()
+
+API_URL = os.getenv('API_URL')
 
 def monthly_analytics():
     response = requests.get(f'{API_URL}/monthlyAnalytics')
